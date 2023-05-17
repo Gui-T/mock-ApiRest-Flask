@@ -4,7 +4,7 @@ name = "mock-ApiRest-Flask"
 version = "0.1.0"
 description = "Mock API REST with Flask"
 authors = [
-    {name = "Eduardo da Silva", email = "eduardo.silva@gmail.com"},
+    {name = "Guilherme Tamanini", email = "guilherme.gui.tama@gmail.com"},
 ]
 dependencies = [
     "Flask>=2.3.2",
