@@ -2,16 +2,13 @@ import secrets
 from typing import Any, List, Dict
 
 from flask import Flask, Response, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
-movies: List[Dict[str, Any]] = [
-    {"id": 1, "title": "The Godfather", "year": 1972, "genre": "Crime"},
-    {"id": 2, "title": "The Shawshank Redemption", "year": 1994, "genre": "Drama"},
-    {"id": 3, "title": "Schindler's List", "year": 1993, "genre": "Biography"},
-    {"id": 4, "title": "Raging Bull", "year": 1980, "genre": "Biography"},
-    {"id": 5, "title": "Casablanca", "year": 1942, "genre": "Romance"},
-    {"id": 6, "title": "Citizen Kane", "year": 1941, "genre": "Drama"},
+computadores: List[Dict[str, Any]] = [
+    {"id": 1, "cliente":"Ronaldo", "placa_mae": "Asus", "processador": "Intel", "memoria_ram": "8GB", "hd": "1TB", "ssd": "256GB", "fonte": "Corsair", "gabinete": "Corsair", "placa_de_video": "Nvidia", "preco": "R$ 5.000,00", "imagem": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.kabum.com.br%2Fproduto%2F101010%2Fplaca-de-video-gigabyte-nvidia-geforce-gtx-1660-super-oc-6gb-gddr6-gv-n166soc-6gd&psig=AOvVaw0QZ3Z3Z2Z2Z2Z2Z2Z2Z2Z2&ust=1629789845654000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCJjQ4ZqHgvICFQAAAAAdAAAAABAD"},
 ]
 
 
@@ -39,12 +36,52 @@ def auth() -> Response:
     return jsonify({"status": "login failed"}), 401
 
 
-@app.route("/movies", methods=["GET"])
-def get_movies() -> Response:
+@app.route("/computadores", methods=["GET"])
+def get_computadores() -> Response:
     """
-    Get all movies
+    Get all computadores
     """
-    return jsonify(movies)
+    return jsonify(computadores)
+
+@app.route("/computadores", methods=["POST"])
+def create_computador() -> Response:
+    """
+    Create a new computador
+    """
+    data: Any = request.get_json()
+    computador = {
+        "id": len(computadores) + 1,
+        "cliente": data.get("cliente"),
+        "placa_mae": data.get("placa_mae"),
+        "placa_de_video": data.get("placa_de_video"),
+        "processador": data.get("processador"),
+        "memoria_ram": data.get("memoria_ram"),
+        "hd": data.get("hd"),
+        "ssd": data.get("ssd"),
+        "fonte": data.get("fonte"),
+        "gabinete": data.get("gabinete"),
+        "preco": data.get("preco"),
+        "imagem": data.get("imagem"),
+    }
+    computadores.append(computador)
+    return jsonify({"status": "success", "computador": computador}), 201
+
+@app.route("/computadores/<int:computador_id>", methods=["DELETE"])
+def delete_computador(computador_id: int) -> Response:
+    """
+    Delete a computador by ID
+    """
+    index = None
+    for i, computador in enumerate(computadores):
+        if computador["id"] == computador_id:
+            index = i
+            break
+
+    if index is not None:
+        deleted_computador = computadores.pop(index)
+        return jsonify({"status": "success", "computador": deleted_computador}), 200
+    else:
+        return jsonify({"status": "failure", "message": "Computador not found"}), 404
 
 
 if __name__ == "__main__":
